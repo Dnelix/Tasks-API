@@ -1,0 +1,28 @@
+php_flag display_errors on
+
+# Allow the HTTP authorization header to be used in session validations
+SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+
+RewriteEngine on
+# Rewrite conditions: 1. Don't rewrite if requested filename is a directory/folder
+RewriteCond %{REQUEST_FILENAME} !-d
+# 2. Don't rewrite if requested filename is a file
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Rewrite rules:
+# 1. Allow the string format in the LHS {tasks/([0-9]+)$} to replace the string format in the RHS {controller/task.php?taskid=$1} everywhere in the URL. 
+# 1b. $1 marks where the first regex expression is represented in the URL
+# 1c. The [L] says that if a match is found, then this is the last rule.  
+RewriteRule ^tasks/([0-9]+)$ controller/task.php?taskid=$1 [L]
+
+# mapping specific links to specific pretty strings
+RewriteRule ^tasks/complete$ controller/task.php?completed=Y [L]
+RewriteRule ^tasks/incomplete$ controller/task.php?completed=N [L]
+RewriteRule ^tasks/page/([0-9]+)$ controller/task.php?page=$1 [L]
+RewriteRule ^tasks$ controller/task.php [L]
+
+# more rules
+RewriteRule ^users$ controller/users.php [L]
+RewriteRule ^users/([0-9]+)$ controller/users.php?userid=$1 [L]
+RewriteRule ^sessions$ controller/sessions.php [L]
+RewriteRule ^sessions/([0-9]+)$ controller/sessions.php?sessionid=$1 [L]
