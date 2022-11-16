@@ -1,4 +1,6 @@
 php_flag display_errors on
+# CORS Options
+Header Set Access-Control-Allow-Origin "*" 
 
 # Allow the HTTP authorization header to be used in session validations
 SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0

@@ -7,6 +7,15 @@ require_once('_functions.php');
 //connect to DB
 require_once('db/connect_write_read_db.php'); // we only use the master (write) DB for authentication checks
 
+// Handle CORS request methods
+if($_SERVER['REQUEST_METHOD'] === 'OPTIONS'){
+    header('Access-Control-Allow-Methods: POST, GET, DELETE, OPTIONS'); //options is always allowed. Include other request mthds that apply
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    header('Access-Control-Max-Age: 86400'); // cache for 24 hours
+
+    responseGeneric(200, true, '');
+}
+
 //check authorization
 require_once('sessions/authenticate.php'); //script to authenticate user access token before performing the action
 
