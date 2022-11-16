@@ -7,7 +7,7 @@ $accesstoken = $_SERVER['HTTP_AUTHORIZATION'];
 
 try{
     //get the user id associated with the access token (query both user and sessions tables)
-    $query = $writeDB -> prepare('SELECT userid, a_tokenexpiry, active, loginattempts FROM tbl_sessions, tbl_users WHERE tbl_sessions.userid = tbl_users.id AND accesstoken = :accesstoken');
+    $query = $writeDB -> prepare('SELECT tbl_sessions.id AS sessionid, userid, a_tokenexpiry, refreshtoken, r_tokenexpiry, active, loginattempts FROM tbl_sessions, tbl_users WHERE tbl_sessions.userid = tbl_users.id AND accesstoken = :accesstoken');
     $query -> bindParam(':accesstoken', $accesstoken, PDO::PARAM_STR);
     $query -> execute();
 
@@ -18,8 +18,11 @@ try{
 
     $row = $query -> fetch(PDO::FETCH_ASSOC);
 
+    $ret_sessionid = $row['sessionid'];
     $ret_userid = $row['userid'];
     $ret_a_tokenexpiry = $row['a_tokenexpiry'];
+    $ret_refreshtoken = $row['refreshtoken'];
+    $ret_r_tokenexpiry = $row['r_tokenexpiry'];
     $ret_active = $row['active'];
     $ret_loginattempts = $row['loginattempts'];
 
@@ -31,7 +34,13 @@ try{
     }
     //if the access token expiry time is less than the current time, then it has expired
     if(strtotime($ret_a_tokenexpiry) < time()){
-        responseGeneric(401, false, 'Access token expired');
+        if(strtotime($ret_r_tokenexpiry) >= time()){ // this portion of the code is optional and may not be required
+            $returnData = array();
+            $returnData['sessionID'] = $ret_sessionid;
+            $returnData['refresh_token'] = $ret_refreshtoken;
+            responseWithData(200, true, $returnData, 'Access token expired');
+        }
+        responseGeneric(401, false, 'Your login have expired. Please login again');
     }
 
 }

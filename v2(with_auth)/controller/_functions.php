@@ -15,7 +15,7 @@ function responseGeneric($code, $state, $message){
     $response = new Response();
     $response -> setHttpStatusCode($code);
     $response -> setSuccess($state);
-    $response -> addMessage($message);
+    (isset($message) ? $response -> addMessage($message) : false);
     $response -> send();
     exit(); 
 }
@@ -38,6 +38,16 @@ function responseSuccessWithData($code, $returnData, $message){
     $response -> setSuccess(true);
     $response -> addMessage($message);
     $response -> setData($returnData);
+    $response -> send();
+    exit(); 
+}
+
+function responseWithData($code, $state, $returnData, $message){
+    $response = new Response();
+    $response -> setHttpStatusCode($code);
+    (isset($state) ? $response -> setSuccess(true) : $response -> setSuccess(false));
+    (isset($message) ? $response -> addMessage($message) : false);
+    (isset($returnData) ? $response -> setData($returnData) : false);
     $response -> send();
     exit(); 
 }

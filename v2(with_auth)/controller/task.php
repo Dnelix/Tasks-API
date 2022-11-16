@@ -3,6 +3,7 @@ require_once('DBconnect.php');
 require_once('../model/Task.php');
 require_once('../model/Response.php');
 require_once('_functions.php');
+require_once('_constants.php');
 
 //connect to DB
 require_once('db/connect_write_read_db.php'); // we only use the master (write) DB for authentication checks
